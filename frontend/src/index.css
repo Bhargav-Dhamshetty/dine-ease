@@ -1,0 +1,92 @@
+@import "tailwindcss";
+/* Global Theme Variables */
+/* index.css */
+
+/* Light Mode Styles */
+:root {
+    --bg-color: white;
+    --text-color: black;
+    --btn-gradient: linear-gradient(90deg, #ff8c00, #ff0080);
+    --sidebar-gradient: linear-gradient(180deg, #1e3a8a, #9333ea);
+  }
+  
+  /* Dark Mode Styles */
+  .dark-mode {
+    --bg-color: black;
+    --text-color: white;
+    --btn-gradient: linear-gradient(90deg, #00ffcc, #ff00ff);
+    --sidebar-gradient: linear-gradient(180deg, #9333ea, #1e3a8a);
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Buttons Styling */
+  .button {
+    background: var(--btn-gradient);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+  
+  /* Sidebar Styling */
+  .sidebar {
+    background: var(--sidebar-gradient);
+    color: white;
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    transition: transform 0.4s ease-in-out;
+  }
+  
+  /* Sidebar Button Styling */
+  .sidebar a {
+    display: block;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    background: var(--btn-gradient);
+    text-align: center;
+    transition: all 0.3s;
+  }
+  
+  .sidebar a:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+  
+  [data-component="DevelopmentModeBadge"],
+.cl-internal-b3fm6y {
+  display: none !important;
+  visibility: hidden !important;
+}
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-bg {
+  background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+  background-size: 400% 400%;
+  animation: gradientAnimation 8s ease infinite;
+}
+/* For smoother scaling effects */
+.table-box {
+  transition: transform 0.3s ease-in-out;
+}
+
+.table-box:hover {
+  transform: scale(1.05);
+}
