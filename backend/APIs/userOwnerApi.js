@@ -1,56 +1,59 @@
-const exp=require('express')
-const expressAsyncHandler=require('express-async-handler')
-const User=require('../models/userAdminModel')
-const userApp=exp.Router()
+const express = require("express");
+const cors = require("cors");
+const expressAsyncHandler = require("express-async-handler");
+const User = require("../Models/userOwnerModel");
+const requireAuth = require("../middleware/clerkAuth"); // Ensure correct export/import
 
+const userApp = express.Router();
 
-userApp.post('/register',expressAsyncHandler(async(req,res)=>{
-    const newUserOwner=req.body;
-    const {email}=req.params.email;
-    const userInDb=await User.findOne({email:email})
-    if(userInDb!==null){
-        if(newUserOwner.role===userInDb.role){
-            res.status(200).send({message:newUserOwner.role,payload:userInDb})
-        }else{
-            res.status(200).send({message:"Invalid role"})
+// ✅ Enable CORS
+userApp.use(cors({ origin: "http://localhost:5173", credentials: true }));
+
+// ✅ Middleware to Parse JSON
+userApp.use(express.json());
+
+// ✅ Register user (New User or Existing User with Matching Role)
+userApp.post(
+    "/register",
+    expressAsyncHandler(async (req, res) => {
+      try {
+        console.log("Received Data:", req.body);
+        const { email, role } = req.body;
+        if (!email || !role) {
+          return res.status(400).json({ message: "Email and Role are required!" });
         }
-    }else{
-        let newUser=new User(newUserOwner);
-        let newUserOrOwnerDoc = await newUser.save();
-        res.status(201).send({message:newUserOwner.role,payload:newUserOrOwnerDoc})
-    }
-}))
+        let userInDb = await User.findOne({ email });
+        if (userInDb) {
+          if (userInDb.role === role) {
+            return res.status(200).json({ message: "User exists", payload: userInDb });
+          } else {
+            return res.status(400).json({ message: "Invalid role" });
+          }
+        }
+        const newUser = new User(req.body);
+        const newUserDoc = await newUser.save();
+        return res.status(201).json({ message: "User registered successfully", payload: newUserDoc });
+      } catch (error) {
+        console.error("❌ Error Registering User:", error);
+        return res.status(500).json({ message: "Server Error", error: error.message });
+      }
+    })
+  );
+  
 
-userApp.put('/users/:email', expressAsyncHandler(async (req, res) => {
+// ✅ Get all users
+userApp.get(
+  "/users",
+  requireAuth,
+  expressAsyncHandler(async (req, res) => {
     try {
-        console.log("Received Data:", req.body); // Debugging log
-        const changeDet = req.body;
-
-        // Prevent email update
-        delete changeDet.email;
-
-        const updatedUser = await UserOwner.findOneAndUpdate(
-            { email: req.params.email },
-            { ...changeDet },
-            { returnOriginal:false }
-        );
-        res.status(200).send({message:"User Updated",payload:updatedUser})
-
+      const users = await User.find();
+      return res.status(200).json({ message: "Users Fetched", payload: users });
     } catch (error) {
-        res.status(500).send({ message: "Server Error", error: error.message });
+      console.error("❌ Error Fetching Users:", error);
+      return res.status(500).json({ message: "Server Error", error: error.message });
     }
-}));
+  })
+);
 
-// Get all users
-userApp.get('/users', expressAsyncHandler(async (req, res) => {
-    try {
-        const users = await UserOwner.find();
-        res.status(200).send({ message: "Users Fetched", payload: users });
-    } catch (error) {
-        res.status(500).send({ message: "Server Error", error: error.message });
-    }
-}));
-
-
-
-module.exports=userApp;
+module.exports = userApp;

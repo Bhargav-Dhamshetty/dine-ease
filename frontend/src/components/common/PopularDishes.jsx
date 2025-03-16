@@ -13,10 +13,10 @@ const PopularDishes = () => {
         <div className="md:w-1/2">
           <h2 className="text-3xl font-bold text-indigo-700">POPULAR DISHES</h2>
           <p className="text-white mt-4">
-            Explore our **top-rated dishes** loved by customers!  
-            From **spicy street food delights** to **authentic regional flavors**,  
+            Explore our *top-rated dishes* loved by customers!  
+            From *spicy street food delights* to *authentic regional flavors*,  
             we bring you a diverse menu that caters to all taste buds.  
-            **Order now and enjoy a delightful dining experience!**
+            *Order now and enjoy a delightful dining experience!*
           </p>
           <button className="mt-6 bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold" onClick={Clickmenu}>
             View Menu

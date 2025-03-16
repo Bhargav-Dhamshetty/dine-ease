@@ -8,9 +8,9 @@ const AboutUs = () => {
           <h2 className="text-3xl font-bold text-indigo-700">ABOUT US</h2>
           <p className="text-gray-600 mt-4">
             Welcome to our food ordering platform, where convenience meets quality!  
-            We aim to bridge the gap between **restaurants, food lovers, and donors**  
+            We aim to bridge the gap between *restaurants, food lovers, and donors*  
             by providing a seamless experience for ordering, booking, and contributing surplus food.  
-            Our goal is to **reduce food waste, support local businesses, and ensure delicious meals reach those in need.**
+            Our goal is to *reduce food waste, support local businesses, and ensure delicious meals reach those in need.*
           </p>
           <button className="mt-6 bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold">
             Contact Now

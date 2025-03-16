@@ -1,28 +1,53 @@
-import { createContext,useEffect,useState } from "react";
-export const userOwnerContextObj=createContext()
-function UserOwnerContext({children}){
-    let [currentUser,setCurrentUser]=useState({
-        firstName:'',
-        lastName:'',
-        email:'',
-        profileImageUrl:'',
-        role:'',
-        address:'',
-        mobile:''
-    })
+import { createContext, useEffect, useState } from "react";
 
-    useEffect(()=>{
-        const userInStorage=localStorage.getItem('currentuser');
-        if(userInStorage){
-            setCurrentUser(JSON.parse(userInStorage))
+// Named Export (Ensures React Fast Refresh works)
+export const UserOwnerContextObj = createContext(null);
+
+function UserOwnerContextProvider({ children }) {
+    const [currentUser, setCurrentUser] = useState(() => {
+        try {
+            const storedUser = localStorage.getItem("currentUser");
+            return storedUser
+                ? JSON.parse(storedUser)
+                : {
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    profileImageUrl: "",
+                    role: "",
+                    address: "",
+                    mobile: ""
+                };
+        } catch (error) {
+            console.error("Error parsing user data from localStorage:", error);
+            return {
+                firstName: "",
+                lastName: "",
+                email: "",
+                profileImageUrl: "",
+                role: "",
+                address: "",
+                mobile: ""
+            };
         }
-    },[])
+    });
+
+    useEffect(() => {
+        if (currentUser?.email) {
+            try {
+                localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            } catch (error) {
+                console.error("Error saving user data to localStorage:", error);
+            }
+        }
+    }, [currentUser]);
 
     return (
-        <userOwnerContextObj.Provider value={{currentUser,setCurrentUser}} >
+        <UserOwnerContextObj.Provider value={{ currentUser, setCurrentUser }}>
             {children}
-        </userOwnerContextObj.Provider>
-    )
+        </UserOwnerContextObj.Provider>
+    );
 }
 
-export default UserOwnerContext;
+// ✅ Consistently Export as Default & Named Export
+export default UserOwnerContextProvider;

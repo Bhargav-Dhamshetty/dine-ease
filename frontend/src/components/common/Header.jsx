@@ -1,22 +1,18 @@
-import { useContext, useState, useEffect } from 'react';
-import { useUser, useClerk,UserButton } from '@clerk/clerk-react';
+import { useState, useEffect, useContext } from 'react';
+import { useUser, useClerk, UserButton } from '@clerk/clerk-react';
 import logo from '../../assets/logo.png';
-import { userOwnerContextObj } from '../context/UserOwnerContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
+import { UserOwnerContextObj } from '../context/UserOwnerContext';
 
 function Header() {
   const { signOut } = useClerk();
-  const { currentUser, setCurrentUser } = useContext(userOwnerContextObj);
   const navigate = useNavigate();
-  const { isSignedIn } = useUser();
-
-  // Theme toggle state
+  const { isSignedIn, user } = useUser();
+  const {currentUser}=useContext(UserOwnerContextObj)
   const [darkMode, setDarkMode] = useState(false);
-  // Sidebar state
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  // Typewriter effect
+  const [role, setRole] = useState(null);
   const words = "Dine Ease";
   const [text, setText] = useState("");
   const [index, setIndex] = useState(0);
@@ -29,10 +25,15 @@ function Header() {
     return () => clearInterval(interval);
   }, [index]);
 
+  useEffect(() => {
+    if (user) {
+      setRole(user.publicMetadata?.role || "user");
+    }
+  }, [user]);
+
   const handleSignOut = async () => {
     try {
       await signOut();
-      setCurrentUser(null);
       localStorage.clear();
       navigate('/');
     } catch (err) {
@@ -48,9 +49,7 @@ function Header() {
             <img src={logo} alt="Logo" className="w-10 h-10" />
           </Link>
           <Link to='/' className="text-lg font-bold tracking-wide">
-            <motion.span
-              className="bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-clip-text text-transparent"
-            >
+            <motion.span className="bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-clip-text text-transparent">
               {text}
             </motion.span>
           </Link>
@@ -64,8 +63,22 @@ function Header() {
           ) : (
             <>
               <UserButton/>
-              <Link to='/myorders' className="btn-gradient">My Orders</Link>
-              <Link to='/myfavourites' className="btn-gradient">My Favourites</Link>
+              {
+                currentUser.role === "owner" ? (
+                  <>
+                    <Link to='/restaurentlist' className="btn-gradient">Restaurant List</Link>
+                    <Link to='/tablebookings' className="btn-gradient">Table Bookings</Link>
+                    
+                  </>
+                ) : (
+                  <>
+                    <Link to='/myorders' className="btn-gradient">My Orders</Link>
+                    <Link to='/tables' className="btn-gradient">Tables</Link>
+                    <Link to='/restaurentlist' className="btn-gradient">Restaurant List</Link>
+                    <Link to='/mybookings' className="btn-gradient">My Bookings</Link>
+                  </>
+                )
+              }
               <motion.button 
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSignOut} 
@@ -77,56 +90,11 @@ function Header() {
           <motion.button 
             whileTap={{ scale: 0.9 }}
             onClick={() => setDarkMode(!darkMode)}
-            className="p-2 border rounded transition-all duration-500 hover:scale-110">
+            className="p-2 border rounded transition-all duration-500 hover:scale-110 ">
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </motion.button>
         </div>
       </nav>
-      
-      {/* Sidebar Toggle Button */}
-      <div className="p-2 absolute top-[70px] left-4 z-10">
-        <motion.button 
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 border rounded transition-all duration-500 hover:scale-110">
-          <Menu size={24} />
-        </motion.button>
-      </div>
-      
-      {/* Sidebar */}
-      <motion.div 
-        initial={{ x: -250 }} 
-        animate={{ x: sidebarOpen ? 0 : -250 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-[64px] left-0 h-[calc(100%-64px)] w-60 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 text-white p-5 shadow-lg z-50`}>
-        <motion.button 
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setSidebarOpen(false)}
-          className="mb-4 transition-all duration-300 transform hover:scale-110">
-          <X size={24} />
-        </motion.button>
-        <ul className="space-y-4">
-          {!isSignedIn ? (
-            <>
-              <li><Link to="/login" className="btn-gradient">Sign In</Link></li>
-              <li><Link to="/signup" className="btn-gradient">Sign Up</Link></li>
-            </>
-          ) : (
-            <>
-              <li><Link to='/myorders' className="btn-gradient">My Orders</Link></li>
-              <li><Link to='/myfavourites' className="btn-gradient">My Favourites</Link></li>
-              <li>
-                <motion.button 
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleSignOut} 
-                  className="btn-gradient p-2 rounded">
-                  Sign Out
-                </motion.button>
-              </li>
-            </>
-          )}
-        </ul>
-      </motion.div>
     </div>
   );
 }

@@ -38,6 +38,7 @@ function Restaurent() {
           </button>
         </div>
       )}
+      
       <style>{`
         .loader {
           border-top-color: #3498db;

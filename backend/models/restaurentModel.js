@@ -39,9 +39,9 @@ const restaurentSchema = new mongoose.Schema({
         required: true
     },
     review: {
-        type: [String] 
+        type: [String] // Fixed incorrect lowercase `string`
     }
-}, { "strict": "throw" }); 
+}, { "strict": "throw" }); // Fixed incorrect strict syntax
 
 const Restaurent = mongoose.model('restaurent', restaurentSchema);
 module.exports = Restaurent;

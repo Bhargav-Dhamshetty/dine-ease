@@ -1,9 +1,12 @@
-import React from 'react';
+import { useContext } from 'react';
 import { SignIn } from '@clerk/clerk-react';
 import { motion } from 'framer-motion';
 import image from '../../assets/image.png';
+import { UserOwnerContextObj } from '../context/UserOwnerContext'; // Ensure proper import
 
 function Login() {
+  const { currentUser } = useContext(UserOwnerContextObj);
+
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-800 via-blue-600 to-indigo-900 p-6 overflow-hidden">
       
@@ -13,13 +16,13 @@ function Login() {
           className="absolute w-full h-full"
           initial={{ x: "-100%" }}
           animate={{ x: "100%" }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
         >
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
             <defs>
               <linearGradient id="zigzagGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{ stopColor: "#ffffff", stopOpacity: 0.8 }} />
-                <stop offset="100%" style={{ stopColor: "#ffffff", stopOpacity: 0.2 }} />
+                <stop offset="0%" stopOpacity="0.8" stopColor="#ffffff" />
+                <stop offset="100%" stopOpacity="0.2" stopColor="#ffffff" />
               </linearGradient>
             </defs>
             {[10, 30, 50, 70, 90].map((y, index) => (
@@ -43,24 +46,25 @@ function Login() {
           src={image}
           alt="Login Illustration"
           className="w-72 h-72 object-contain drop-shadow-2xl"
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.8 }}
         />
 
         {/* Clerk SignIn Component - Branding Removed */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
           className="w-full max-w-sm"
         >
           <SignIn 
+            signUpUrl="/signup" // Redirect to signup page
             appearance={{
               elements: {
                 footer: "hidden", // Hides "Secured by Clerk"
                 headerSubtitle: "hidden", // Hides unnecessary Clerk text
-                card: "shadow-2xl rounded-xl border border-gray-200 bg-gray-100", // Custom styling
+                card: "shadow-xl rounded-lg border border-gray-300 bg-white", // Softer background
               },
               layout: {
                 logoPlacement: "none", // Removes Clerk logo

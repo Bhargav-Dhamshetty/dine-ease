@@ -1,98 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 
-function AddRestaurent() {
+function AddRestaurant({ onRestaurantAdded = () => {} }) {
   const [formData, setFormData] = useState({
     name: '',
-    imagesLink: [],
     description: '',
     location: '',
     latitude: '',
     longitude: '',
     totalTables: '',
+    tablesAvailable: '',
+    imagesLink: [],
     menuImage: [],
   });
-  
+
+  const auth = useAuth();
   const navigate = useNavigate();
 
-  // Function to handle file uploads
-  const handleFileChange = (e, field) => {
-    const files = Array.from(e.target.files).map(file => URL.createObjectURL(file));
-    setFormData(prev => ({ ...prev, [field]: files }));
-  };
-
-  // Function to get user location
-  const getLocation = () => {
+  useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           }));
         },
         (error) => {
-          console.error("Error fetching location:", error);
+          console.error('Error fetching location:', error);
         }
       );
-    } else {
-      alert("Geolocation is not supported by this browser.");
     }
+  }, []);
+
+  const handleFileChange = (e, field) => {
+    const files = Array.from(e.target.files);
+    setFormData((prev) => ({ ...prev, [field]: files }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const data = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (Array.isArray(formData[key])) {
+        formData[key].forEach((file) => data.append(key, file));
+      } else {
+        data.append(key, formData[key]);
+      }
+    });
+
     try {
-      await axios.post('https://localhost:9000/restaurant-api/details', formData);
+      const token = await auth.getToken();
+      const response = await axios.post('http://localhost:9000/restaurent-api/details', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       alert('Restaurant added successfully!');
+      onRestaurantAdded(response.data);
       navigate('/restaurentlist');
     } catch (error) {
-      console.error('Error adding restaurant:', error);
-      alert('Failed to add restaurant. Try again!');
+      console.error('Error adding restaurant:', error.response ? error.response.data : error);
+      alert('Failed to add restaurant. Please try again.');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-900 p-6">
-      <div className="bg-green-100 p-8 rounded-lg shadow-lg w-full max-w-2xl animate-fade-in ">
+    <div className="min-h-screen flex items-center justify-center bg-blue-900 p-6 relative">
+      <div className="bg-green-100 p-8 rounded-lg shadow-lg w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-4 text-center">Add New Restaurant</h2>
-        <form onSubmit={handleSubmit} className="space-y-4 ">
-          <input type="text" placeholder="Restaurant Name" className="w-full p-2 border rounded" required
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input type="text" placeholder="Restaurant Name" className="w-full p-2 border rounded" required 
             value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-          
-          <textarea placeholder="Description" className="w-full p-2 border rounded" required
+          <textarea placeholder="Description" className="w-full p-2 border rounded" required 
             value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}></textarea>
-          
-          <input type="text" placeholder="Address" className="w-full p-2 border rounded" required
+          <input type="text" placeholder="Address" className="w-full p-2 border rounded" required 
             value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} />
-          
           <div className="flex gap-2">
-            <button type="button" className="p-2 bg-blue-600 text-white rounded" onClick={getLocation}>Get My Location</button>
             <input type="text" placeholder="Latitude" className="p-2 border rounded" value={formData.latitude} readOnly />
             <input type="text" placeholder="Longitude" className="p-2 border rounded" value={formData.longitude} readOnly />
           </div>
-          
-          <input type="number" placeholder="Total Tables" className="w-full p-2 border rounded" required
-            value={formData.totalTables} onChange={(e) => setFormData({ ...formData, totalTables: e.target.value })} />
-          
+          <input type="number" placeholder="Total Tables" className="w-full p-2 border rounded" required 
+            value={formData.totalTables} onChange={(e) => setFormData({ ...formData, totalTables: Number(e.target.value) })} />
+          <input type="number" placeholder="Available Tables" className="w-full p-2 border rounded" required 
+            value={formData.tablesAvailable} onChange={(e) => setFormData({ ...formData, tablesAvailable: Number(e.target.value) })} />
           <div>
             <label className="block font-semibold">Upload Restaurant Images</label>
-            <input type="file" multiple accept="image/*" className="w-full p-2 border rounded" onChange={(e) => handleFileChange(e, 'imagesLink')} />
+            <input type="file" multiple accept="image/*" className="w-full p-2 border rounded" 
+              onChange={(e) => handleFileChange(e, 'imagesLink')} />
           </div>
-          
           <div>
             <label className="block font-semibold">Upload Menu Images</label>
-            <input type="file" multiple accept="image/*" className="w-full p-2 border rounded" onChange={(e) => handleFileChange(e, 'menuImage')} />
+            <input type="file" multiple accept="image/*" className="w-full p-2 border rounded" 
+              onChange={(e) => handleFileChange(e, 'menuImage')} />
           </div>
-          
-          <button type="submit" className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700">Add Restaurant</button>
+          <button type="submit" className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700">
+            Add Restaurant
+          </button>
         </form>
       </div>
     </div>
   );
 }
 
-export default AddRestaurent;
+export default AddRestaurant;
