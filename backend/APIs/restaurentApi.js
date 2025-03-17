@@ -3,7 +3,7 @@ const expressAsyncHandler = require('express-async-handler');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const Restaurant = require('../Models/restaurentModel');
+const Restaurant = require('../models/restaurentModel');
 const requireAuth = require('../middleware/clerkAuth'); // Clerk Middleware
 
 const restaurantApp = express.Router();

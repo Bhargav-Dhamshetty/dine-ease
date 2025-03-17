@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const expressAsyncHandler = require("express-async-handler");
-const User = require("../Models/userOwnerModel");
+const User = require("../models/userOwnerModel");
 const requireAuth = require("../middleware/clerkAuth"); // Ensure correct export/import
 
 const userApp = express.Router();

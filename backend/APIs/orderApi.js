@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Order = require("../Models/odiModel");
+const Order = require("../models/odiModel");
 const { requireAuth } = require("@clerk/clerk-sdk-node");
 
 // ✅ **Place an Order**
