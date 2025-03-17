@@ -13,7 +13,7 @@ function Tables() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:9000/restaurent-api/all")
+      .get(`${import.meta.env.BACKEND_URL}/restaurent-api/all`)
       .then((res) => setRestaurants(res.data.payload || []))
       .catch((err) => console.error("❌ Error fetching restaurants:", err));
   }, []);
@@ -21,7 +21,7 @@ function Tables() {
   useEffect(() => {
     if (selectedRestaurant) {
       axios
-        .get(`http://localhost:9000/table-api/bookings`, {
+        .get(`${import.meta.env.BACKEND_URL}/table-api/bookings`, {
           params: { restaurantName: selectedRestaurant }, // Ensure backend supports this
         })
         .then((res) => {
@@ -81,7 +81,7 @@ function Tables() {
     console.log("📤 Sending booking data:", bookingData);
 
     try {
-      const response = await axios.post("http://localhost:9000/table-api/book-table", bookingData);
+      const response = await axios.post(`${import.meta.env.BACKEND_URL}/table-api/book-table`, bookingData);
 
       if (response.status === 201) {
         setTableStatus((prevStatus) => {

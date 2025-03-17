@@ -65,7 +65,7 @@ function Home() {
 
       console.log("Sending data:", userData); // Debugging
 
-      let res = await axios.post('http://localhost:9000/user-api/register', userData, {
+      let res = await axios.post(`${import.meta.env.BACKEND_URL}/user-api/register`, userData, {
         headers: { 'Content-Type': 'application/json' }
       });
 

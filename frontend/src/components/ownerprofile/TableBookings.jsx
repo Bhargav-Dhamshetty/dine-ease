@@ -10,7 +10,7 @@ function TableBookings() {
     const fetchBookings = async () => {
       try {
         // ✅ Fetch all bookings without any query parameters
-        const response = await axios.get("http://localhost:9000/table-api/booking/all");
+        const response = await axios.get(`${import.meta.env.BACKEND_URL}/table-api/booking/all`);
 
         if (response.status === 200) {
           setBookings(response.data || []);
