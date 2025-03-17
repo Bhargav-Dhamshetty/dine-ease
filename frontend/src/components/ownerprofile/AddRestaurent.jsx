@@ -54,7 +54,7 @@ function AddRestaurant({ onRestaurantAdded = () => {} }) {
 
     try {
       const token = await auth.getToken();
-      const response = await axios.post(`${import.meta.env.BACKEND_URL}/restaurent-api/details`, data, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/restaurent-api/details`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

@@ -8,7 +8,7 @@ function Restaurent() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${import.meta.env.BACKEND_URL}/restaurant-api/all`)
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/restaurant-api/all`)
       .then(response => {
         setRestaurant(response.data.payload);
         setLoading(false);

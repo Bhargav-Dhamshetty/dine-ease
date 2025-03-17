@@ -22,7 +22,7 @@ const RestaurantList = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.BACKEND_URL}/restaurent-api/all`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/restaurent-api/all`);
         if (response.data && response.data.payload) {
           const updatedRestaurants = response.data.payload.map((restaurant, index) => ({
             ...restaurant,
@@ -45,7 +45,7 @@ const RestaurantList = () => {
     if (review.trim()) {
       setSubmittingReview(true);
       try {
-        await axios.post(`${import.meta.env.BACKEND_URL}/restaurent-api/review/${restaurantName}`, { review });
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/restaurent-api/review/${restaurantName}`, { review });
 
         setSelectedRestaurant((prev) => ({
           ...prev,

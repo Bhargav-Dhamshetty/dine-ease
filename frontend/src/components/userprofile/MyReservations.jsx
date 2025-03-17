@@ -26,7 +26,7 @@ function MyReservations() {
 
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.BACKEND_URL}/table-api/bookings/user`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/table-api/bookings/user`, {
           params: { email: userEmail.toLowerCase() },
           timeout: 5000,
         });
@@ -49,7 +49,7 @@ function MyReservations() {
 
   const cancelBooking = async (bookingId) => {
     try {
-      await axios.delete(`${import.meta.env.BACKEND_URL}/table-api/cancel/${bookingId}`);
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/table-api/cancel/${bookingId}`);
       setBookings((prevBookings) => prevBookings.filter((booking) => booking._id !== bookingId));
       alert("Booking canceled successfully.");
     } catch (error) {

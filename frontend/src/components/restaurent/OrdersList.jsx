@@ -10,7 +10,7 @@ const OrdersList = () => {
     const fetchOrders = async () => {
       if (!hotelName) return;
       try {
-        const response = await axios.get(`${import.meta.env.BACKEND_URL}/order-api/hotelorders/${hotelName}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/order-api/hotelorders/${hotelName}`);
         const fetchedOrders = response.data.payload
           ? response.data.payload.map((order, index) => ({
               id: order._id,
