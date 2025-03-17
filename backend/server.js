@@ -8,13 +8,14 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 9000;
 
 // Import API routes
 const userApp = require("./APIs/userOwnerApi");
 const restaurentApp = require("./APIs/restaurentApi");
 const tableApp = require("./APIs/tableApi");
-const odiApp=require("./APIs/orderApi")
+const orderApp = require("./APIs/orderApi"); 
+
 // Middleware
 app.use(express.json()); // Parse JSON data
 
@@ -44,13 +45,13 @@ const upload = multer({
 
 // CORS Configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: process.env.FRONTEND_URL || "https://dine-ease-puce.vercel.app", // Fallback for local dev
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, 
+  credentials: true,
 }));
 
-// Preflight request handling
+// Preflight request handling (Fixing 405 error)
 app.options("*", cors());
 
 // Serve Uploaded Files
@@ -73,7 +74,7 @@ const connectDB = async () => {
     await mongoose.connect(process.env.DBURL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, 
+      serverSelectionTimeoutMS: 5000,
     });
 
     console.log("✅ Database Connected Successfully");
@@ -82,7 +83,7 @@ const connectDB = async () => {
     app.use("/user-api", userApp);
     app.use("/restaurent-api", restaurentApp);
     app.use("/table-api", tableApp);
-    app.use("/odi-api",odiApp)
+    app.use("/order-api", orderApp);
 
     // Handle Unknown Routes
     app.use((req, res) => res.status(404).json({ message: "Route Not Found" }));
